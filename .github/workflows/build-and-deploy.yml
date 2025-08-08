@@ -1,4 +1,4 @@
-name: Build All Projects and Deploy
+name: Build Selected Projects and Deploy
 
 on:
   push:
@@ -22,68 +22,88 @@ jobs:
         with:
           node-version: "18"
 
-      - name: 🏗️ Build All Projects
+      - name: 🏗️ Build Selected Projects
         run: |
           # Criar pasta para reunir todos os builds
           mkdir -p _site
 
-          # Função para buildar projetos
-          build_project() {
-            local project_dir=$1
-            echo "🔨 Building $project_dir..."
-            
-            if [ -d "$project_dir" ]; then
-              cd "$project_dir"
-              
-              # Instalar dependências se existir package.json
-              if [ -f "package.json" ]; then
-                npm install
-                
-                # Verificar se é Grunt ou Gulp e fazer build
-                if [ -f "Gruntfile.js" ]; then
-                  npx grunt build || npx grunt || echo "❌ Build failed for $project_dir"
-                elif [ -f "gulpfile.js" ]; then
-                  npx gulp build || npx gulp || echo "❌ Build failed for $project_dir"
-                fi
-                
-                # Copiar arquivos buildados para _site (mesmo se build falhou)
-                if [ -d "dist" ]; then
-                  mkdir -p "../_site/$project_dir"
-                  cp -r dist/* "../_site/$project_dir/" 2>/dev/null || true
-                  # Também copiar index.html da raiz do projeto se existir
-                  cp -f index.html "../_site/$project_dir/" 2>/dev/null || true
-                elif [ -d "build" ]; then
-                  mkdir -p "../_site/$project_dir"
-                  cp -r build/* "../_site/$project_dir/" 2>/dev/null || true
-                  cp -f index.html "../_site/$project_dir/" 2>/dev/null || true
-                else
-                  # Se não há pasta de build, copia arquivos principais
-                  mkdir -p "../_site/$project_dir"
-                  cp -f *.html "../_site/$project_dir/" 2>/dev/null || true
-                  cp -rf src "../_site/$project_dir/" 2>/dev/null || true
-                  cp -rf css "../_site/$project_dir/" 2>/dev/null || true
-                  cp -rf js "../_site/$project_dir/" 2>/dev/null || true
-                  cp -rf images "../_site/$project_dir/" 2>/dev/null || true
-                fi
-              fi
-              
-              cd ..
+          # ============================================
+          # 🎯 PROJETOS QUE VOCÊ QUER BUILDAR
+          # ============================================
+
+          # EXERCICIO_GRUNT (com build)
+          if [ -d "exercicio_grunt" ]; then
+            echo "🔨 Building exercicio_grunt..."
+            cd exercicio_grunt
+            if [ -f "package.json" ]; then
+              npm install
+              npx grunt build || npx grunt || true
             fi
-          }
+            # Copia TUDO da pasta dist para _site/exercicio_grunt
+            if [ -d "dist" ]; then
+              cp -r dist/ "../_site/exercicio_grunt"
+            fi
+            cd ..
+          fi
 
-          # Buildar cada projeto que tem build tools
-          build_project "exercicio_grunt"
+          # EXERCICIO_GULP (com build)
+          if [ -d "exercicio_gulp" ]; then
+            echo "🔨 Building exercicio_gulp..."
+            cd exercicio_gulp
+            if [ -f "package.json" ]; then
+              npm install
+              npx gulp build || npx gulp || true
+            fi
+            # Copia TUDO da pasta dist para _site/exercicio_gulp
+            if [ -d "dist" ]; then
+              cp -r dist/ "../_site/exercicio_gulp"
+            fi
+            cd ..
+          fi
 
-          build_project "projeto_04"
-          # Adicione outros projetos aqui conforme necessário
+          # ============================================
+          # 📁 PROJETOS SEM BUILD (cópia direta)
+          # ============================================
 
-          # Copiar arquivos da raiz se existirem (index.html, etc.)
+          # Adicione aqui os projetos que você quer incluir SEM build
+          for project in "JogoVolei" "projeto_03" "exercicio_sass" "exercicio-modulo-12" "exercicio-modulo-8" "exercicio_css" "exercicio_html_js" "exercicio_modulo_10" "exercicio_modulo_11" "exercicio_modulo_13" "exercicio_sass" "exericio_modulo_jquery" "modulo5_projeto1_entrega" "plugins_jquery" "projeto_01" "projeto_02" ; do
+            if [ -d "$project" ]; then
+              echo "📁 Copying $project..."
+              cp -r "$project" "_site/"
+            fi
+          done
+
+          # ============================================
+          # 🏠 ARQUIVOS DA RAIZ
+          # ============================================
+
+          # Copiar index.html e outros arquivos da raiz
           cp -f *.html _site/ 2>/dev/null || true
           cp -rf images _site/ 2>/dev/null || true
+          cp -rf css _site/ 2>/dev/null || true
+          cp -rf js _site/ 2>/dev/null || true
+          cp -f *.js _site/ 2>/dev/null || true
 
       - name: 🚀 Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_site
+          force_orphan: true
+
+          ## Adicione o nome na lista da seção "PROJETOS SEM BUILD"
+# for project in "JogoVolei" "projeto_03" "exercicio_sass" "SEU_NOVO_PROJETO"; do
+# Adicione este bloco na seção "PROJETOS QUE VOCÊ QUER BUILDAR"
+#if [ -d "nome_do_projeto" ]; then
+#  echo "🔨 Building nome_do_projeto..."
+#  cd nome_do_projeto
+#  if [ -f "package.json" ]; then
+#    npm install
+#    npx grunt build || npx gulp build || true  # escolha grunt OU gulp
+#  fi
+#  if [ -d "dist" ]; then
+#    cp -r dist/ "../_site/nome_do_projeto"
+#  fi
+#  cd ..
+#fi
