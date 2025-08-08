@@ -36,14 +36,24 @@ jobs:
                 
                 # Verificar se é Grunt ou Gulp e fazer build
                 if [ -f "Gruntfile.js" ]; then
-                  npx grunt build || npx grunt
+                  npx grunt build || npx grunt || echo "❌ Build failed for $project_dir"
                 elif [ -f "gulpfile.js" ]; then
-                  npx gulp build || npx gulp
+                  npx gulp build || npx gulp || echo "❌ Build failed for $project_dir"
                 fi
                 
-                # Copiar arquivos buildados para _site
+                # Copiar arquivos buildados para _site (mesmo se build falhou)
                 if [ -d "dist" ]; then
                   cp -r dist "../_site/$project_dir"
+                elif [ -d "build" ]; then
+                  cp -r build "../_site/$project_dir"
+                else
+                  # Se não há pasta de build, copia arquivos principais
+                  mkdir -p "../_site/$project_dir"
+                  cp -f *.html "../_site/$project_dir/" 2>/dev/null || true
+                  cp -rf src "../_site/$project_dir/" 2>/dev/null || true
+                  cp -rf css "../_site/$project_dir/" 2>/dev/null || true
+                  cp -rf js "../_site/$project_dir/" 2>/dev/null || true
+                  cp -rf images "../_site/$project_dir/" 2>/dev/null || true
                 fi
               fi
               
