@@ -1,0 +1,139 @@
+name: Build and Deploy Portfolio
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Detect and build projects automatically
+        run: |
+          echo "🔍 Procurando projetos que precisam de build..."
+
+          # Função para fazer build de um projeto
+          build_project() {
+            local project_dir=$1
+            echo ""
+            echo "📦 Iniciando build do projeto: $project_dir"
+            echo "================================================"
+            
+            cd "$project_dir"
+            
+            if [ -f "package.json" ]; then
+              echo "✅ package.json encontrado"
+              
+              # Instalar dependências
+              echo "📥 Instalando dependências..."
+              npm install --production=false
+              
+              # Tentar diferentes comandos de build em ordem de prioridade
+              echo "🔨 Tentando comandos de build..."
+              
+              if npm run build 2>/dev/null; then
+                echo "✅ ✨ Build realizado com sucesso usando: npm run build"
+              elif npm run prod 2>/dev/null; then
+                echo "✅ ✨ Build realizado com sucesso usando: npm run prod"
+              elif npx grunt build 2>/dev/null; then
+                echo "✅ ✨ Build realizado com sucesso usando: grunt build"
+              elif npx grunt 2>/dev/null; then
+                echo "✅ ✨ Build realizado com sucesso usando: grunt"
+              elif npx gulp build 2>/dev/null; then
+                echo "✅ ✨ Build realizado com sucesso usando: gulp build"
+              elif npx gulp 2>/dev/null; then
+                echo "✅ ✨ Build realizado com sucesso usando: gulp"
+              else
+                echo "⚠️  Nenhum comando de build padrão funcionou para $project_dir"
+                echo "📋 Scripts disponíveis no package.json:"
+                npm run 2>/dev/null | grep -E "^  [a-zA-Z]" || echo "   Nenhum script encontrado"
+              fi
+              
+              # Verificar se build gerou arquivos
+              if [ -d "dist" ]; then
+                echo "📁 Pasta dist/ criada com sucesso"
+                ls -la dist/ | head -10
+              elif [ -d "build" ]; then
+                echo "📁 Pasta build/ criada com sucesso"  
+                ls -la build/ | head -10
+              else
+                echo "📁 Verificando arquivos gerados na raiz do projeto..."
+                ls -la | grep -E "\.(html|css|js)$" | head -5
+              fi
+              
+            else
+              echo "⚠️  package.json não encontrado em $project_dir - pulando"
+            fi
+            
+            cd ..
+            echo "================================================"
+          }
+
+          # Escanear todos os diretórios procurando por package.json
+          projects_found=0
+          for dir in */; do
+            # Pular diretórios que não são projetos
+            if [[ "$dir" == "node_modules/" || "$dir" == ".git/" || "$dir" == ".github/" ]]; then
+              continue
+            fi
+            
+            if [ -d "$dir" ] && [ -f "${dir}package.json" ]; then
+              echo "🎯 Projeto encontrado: $dir"
+              build_project "$dir"
+              projects_found=$((projects_found + 1))
+            fi
+          done
+
+          if [ $projects_found -eq 0 ]; then
+            echo "ℹ️  Nenhum projeto com package.json encontrado"
+            echo "📝 Projetos sem build continuarão funcionando normalmente"
+          else
+            echo ""
+            echo "🎉 Build completo! $projects_found projeto(s) processado(s)"
+          fi
+
+      - name: Verify build results
+        run: |
+          echo "📊 Verificando resultados do build..."
+          echo ""
+          echo "📁 Estrutura de diretórios após build:"
+          find . -maxdepth 2 -type d -name "dist" -o -name "build" | sort
+          echo ""
+          echo "📄 Arquivos HTML principais:"
+          find . -maxdepth 2 -name "index.html" | sort
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          # Manter arquivos buildados, excluir arquivos de desenvolvimento
+          exclude_assets: ".github,node_modules,src,gulpfile.js,Gruntfile.js,gruntfile.js,package*.json,*.md,.gitignore,build-portfolio.sh,.sass-cache,.tmp"
+
+      - name: Build Summary
+        if: always()
+        run: |
+          echo ""
+          echo "📋 RESUMO DO BUILD"
+          echo "=================="
+          echo "✅ Projetos que não precisam de build: funcionam automaticamente"
+          echo "🔨 Projetos que precisam de build: processados automaticamente"  
+          echo "🚀 Deploy: realizado para GitHub Pages"
+          echo ""
+          echo "Para adicionar um novo projeto:"
+          echo "1. Coloque a pasta com package.json configurado"
+          echo "2. Faça commit - build será automático!"
+          echo ""
