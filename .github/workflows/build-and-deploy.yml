@@ -1,0 +1,69 @@
+name: Build All Projects and Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: 🏗️ Build All Projects
+        run: |
+          # Criar pasta para reunir todos os builds
+          mkdir -p _site
+
+          # Função para buildar projetos
+          build_project() {
+            local project_dir=$1
+            echo "🔨 Building $project_dir..."
+            
+            if [ -d "$project_dir" ]; then
+              cd "$project_dir"
+              
+              # Instalar dependências se existir package.json
+              if [ -f "package.json" ]; then
+                npm install
+                
+                # Verificar se é Grunt ou Gulp e fazer build
+                if [ -f "Gruntfile.js" ]; then
+                  npx grunt build || npx grunt
+                elif [ -f "gulpfile.js" ]; then
+                  npx gulp build || npx gulp
+                fi
+                
+                # Copiar arquivos buildados para _site
+                if [ -d "dist" ]; then
+                  cp -r dist "../_site/$project_dir"
+                fi
+              fi
+              
+              cd ..
+            fi
+          }
+
+          # Buildar cada projeto que tem build tools
+          build_project "exercicio_grunt"
+          build_project "exercicio_gulp"
+          build_project "projeto_04"
+          # Adicione outros projetos aqui conforme necessário
+
+          # Copiar arquivos da raiz se existirem (index.html, etc.)
+          cp -f *.html _site/ 2>/dev/null || true
+          cp -rf images _site/ 2>/dev/null || true
+
+      - name: 🚀 Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
