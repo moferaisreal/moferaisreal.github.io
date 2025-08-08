@@ -85,14 +85,22 @@ jobs:
           cp -f *.js _site/ 2>/dev/null || true
 
       - name: 🚀 Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        if: github.ref == 'refs/heads/main'
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_site
-          force_orphan: true
+        run: |
+          # Configurar git
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+          # Fazer deploy direto
+          cd _site
+          git init
+          git add .
+          git commit -m "Deploy: $(date)"
+          git branch -M gh-pages
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git push -f origin gh-pages
 
           ## Adicione o nome na lista da seção "PROJETOS SEM BUILD"
+
 # for project in "JogoVolei" "projeto_03" "exercicio_sass" "SEU_NOVO_PROJETO"; do
 # Adicione este bloco na seção "PROJETOS QUE VOCÊ QUER BUILDAR"
 #if [ -d "nome_do_projeto" ]; then
