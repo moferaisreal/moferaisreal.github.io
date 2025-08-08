@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -43,9 +48,14 @@ jobs:
                 
                 # Copiar arquivos buildados para _site (mesmo se build falhou)
                 if [ -d "dist" ]; then
-                  cp -r dist "../_site/$project_dir"
+                  mkdir -p "../_site/$project_dir"
+                  cp -r dist/* "../_site/$project_dir/" 2>/dev/null || true
+                  # Também copiar index.html da raiz do projeto se existir
+                  cp -f index.html "../_site/$project_dir/" 2>/dev/null || true
                 elif [ -d "build" ]; then
-                  cp -r build "../_site/$project_dir"
+                  mkdir -p "../_site/$project_dir"
+                  cp -r build/* "../_site/$project_dir/" 2>/dev/null || true
+                  cp -f index.html "../_site/$project_dir/" 2>/dev/null || true
                 else
                   # Se não há pasta de build, copia arquivos principais
                   mkdir -p "../_site/$project_dir"
@@ -63,7 +73,7 @@ jobs:
 
           # Buildar cada projeto que tem build tools
           build_project "exercicio_grunt"
-          build_project "exercicio_gulp"
+
           build_project "projeto_04"
           # Adicione outros projetos aqui conforme necessário
 
