@@ -9,6 +9,8 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -102,6 +104,25 @@ jobs:
             echo ""
             echo "🎉 Build completo! $projects_found projeto(s) processado(s)"
           fi
+
+      - name: Copy built projects to correct structure
+        run: |
+          echo "Organizando estrutura para GitHub Pages..."
+
+          for dir in */; do
+            if [[ "$dir" != "node_modules/" && "$dir" != ".git/" && "$dir" != ".github/" ]]; then
+              echo "Verificando projeto: $dir"
+              
+              # Se existe dist/ ou build/, copia o conteúdo
+              if [ -d "${dir}dist" ]; then
+                echo "Copiando conteúdo de ${dir}dist/ para ${dir}"
+                cp -r "${dir}dist"/* "$dir" 2>/dev/null || true
+              elif [ -d "${dir}build" ]; then
+                echo "Copiando conteúdo de ${dir}build/ para ${dir}"
+                cp -r "${dir}build"/* "$dir" 2>/dev/null || true
+              fi
+            fi
+          done
 
       - name: Verify build results
         run: |
