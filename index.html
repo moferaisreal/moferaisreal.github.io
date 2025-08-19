@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Meu Portfólio de Projetos</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -30,9 +31,11 @@
         <p class="text-lg text-gray-400">
           Uma coleção de exercícios e projetos dos meus estudos.
         </p>
+
+        <!-- Desktop Navigation (hidden on mobile) -->
         <div
           id="category-toggler"
-          class="flex justify-center space-x-2 md:space-x-7 mt-8 border border-gray-700 rounded-full p-1 mx-auto"
+          class="hidden md:flex justify-center space-x-2 md:space-x-7 mt-8 border border-gray-700 rounded-full p-1 mx-auto"
         >
           <button
             data-target="frontend"
@@ -53,7 +56,7 @@
             Banco de Dados
           </button>
           <button
-            data-target="database"
+            data-target="mobile"
             class="toggler-btn w-full py-2 px-4 rounded-full transition-colors duration-300"
           >
             Mobile
@@ -64,6 +67,27 @@
           >
             Sobre
           </button>
+        </div>
+
+        <!-- Mobile Hamburger Menu (hidden on desktop) -->
+        <div class="hamburger-menu mt-8 md:hidden">
+          <button class="hamburger-btn" id="hamburger-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <div class="mobile-nav-menu" id="mobile-menu">
+            <button data-target="frontend" class="toggler-btn active">
+              Frontend
+            </button>
+            <button data-target="backend" class="toggler-btn">Backend</button>
+            <button data-target="database" class="toggler-btn">
+              Banco de Dados
+            </button>
+            <button data-target="mobile" class="toggler-btn">Mobile</button>
+            <button data-target="about" class="toggler-btn">Sobre</button>
+          </div>
         </div>
       </header>
       <!-- BOTÃO HEADER -->
