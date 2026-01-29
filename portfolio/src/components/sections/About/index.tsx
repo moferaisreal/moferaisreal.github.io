@@ -19,7 +19,10 @@ export const About: React.FC = () => {
   return (
     <AboutWrapper>
       <AboutHeader>
-        <ProfileImage src='/images/3123.jpg' alt='Marcelo Rocha' />
+        <ProfileImage
+          src='https://github.com/moferaisreal.png'
+          alt='Marcelo Rocha'
+        />
         <ProfileInfo>
           <Name>Marcelo Rocha</Name>
           <Role>Engenheiro Front-end</Role>

@@ -1,21 +1,29 @@
 {
-  "name": "exercicio_modulo_21",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "build": " gulp build",
-    "build-bundle": " gulp build-bundle",
-    "dev": " gulp dev"
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "styled-components": "^6.1.12"
   },
   "devDependencies": {
-    "gulp": "^4.0.2",
-    "gulp-clean-css": "^4.3.0",
-    "gulp-concat": "^2.6.1",
-    "gulp-imagemin": "^7.1.0",
-    "gulp-sass": "^5.1.0",
-    "gulp-sourcemaps": "^3.0.0",
-    "gulp-uglify": "^3.0.2",
-    "sass": "^1.77.0",
-    "uglify-js": "^3.19.0"
+    "@eslint/js": "^9.9.1",
+    "@eslint/json": "^0.14.0",
+    "@eslint/markdown": "^7.5.1",
+    "eslint": "^9.9.1",
+    "eslint-plugin-jsx-a11y": "^6.9.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react": "^7.35.2",
+    "eslint-plugin-react-hooks": "^5.0.0-pre.0",
+    "globals": "^15.9.0",
+    "jiti": "^1.21.6",
+    "prettier": "3.3.3",
+    "typescript-eslint": "^8.5.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run type-check && npm run build-only",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --noEmit",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.js,.ts --fix"
   }
 }
