@@ -1,5 +1,12 @@
 import React from 'react';
-import { FaGithub, FaInstagram, FaXTwitter } from 'react-icons/fa6';
+import {
+  FaGithub,
+  FaInstagram,
+  FaLinkedinIn,
+  FaXTwitter,
+  FaRedditAlien 
+} from 'react-icons/fa6';
+import { SiSubstack } from "react-icons/si";
 import { HiEnvelope } from 'react-icons/hi2';
 import {
   AboutHeader,
@@ -45,7 +52,9 @@ export const About: React.FC = () => {
       </Bio>
 
       <Divider>
-        <SectionTitle>Conecte-se comigo</SectionTitle>
+        <SectionTitle>
+          Estou a um follow ou um e-mail de distância.
+        </SectionTitle>
         <SocialLinks>
           <li>
             <SocialLink
@@ -78,7 +87,37 @@ export const About: React.FC = () => {
             </SocialLink>
           </li>
           <li>
-            <SocialLink href='mailto:contato@example.com' aria-label='Email'>
+            <SocialLink
+              href='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+              target='_blank'
+              rel='noopener noreferrer'
+              aria-label='LinkedIn'
+            >
+              <FaLinkedinIn />
+            </SocialLink>
+          </li>
+          <li>
+            <SocialLink
+              href='https://www.reddit.com/user/Mofera/'
+              target='_blank'
+              rel='noopener noreferrer'
+              aria-label='Reddit'
+            >
+              <FaRedditAlien />
+            </SocialLink>
+          </li>
+           <li>
+            <SocialLink
+              href='https://substack.com/@mofera?'
+              target='_blank'
+              rel='noopener noreferrer'
+              aria-label='Reddit'
+            >
+              <SiSubstack />
+            </SocialLink>
+          </li>
+          <li>
+            <SocialLink href='mailto:marcelovrch@icloud.com' aria-label='Email'>
               <HiEnvelope />
             </SocialLink>
           </li>

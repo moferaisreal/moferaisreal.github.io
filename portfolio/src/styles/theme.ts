@@ -4,33 +4,38 @@ export const darkTheme: DefaultTheme = {
   name: 'dark',
   colors: {
     background: {
-      primary: '#0F172A',
-      secondary: '#1E293B',
-      tertiary: '#334155',
-      card: '#1E293B',
-      cardHover: '#334155',
+      primary: '#1D2B53', // Deep synthwave night
+      secondary: '#261F4B', // Darkened blue-purple
+      tertiary: '#3A2A63', // Elevated surface
+      card: '#261F4B',
+      cardHover: '#3A2A63',
     },
+
     text: {
-      primary: '#F8FAFC',
-      secondary: '#CBD5E1',
-      muted: '#94A3B8',
+      primary: '#FFFDF5', // Soft neon white
+      secondary: '#E3C9D9', // Muted neon lavender
+      muted: '#B89CB4',
     },
+
     accent: {
-      primary: '#3B82F6',
-      secondary: '#8B5CF6',
-      tertiary: '#06B6D4',
-      hover: '#2563EB',
+      primary: '#FF004D', // 🔥 Neon pink (main CTA)
+      secondary: '#7E2553', // Magenta accent
+      tertiary: '#FAEF5D', // ⚡ Neon yellow highlight
+      hover: '#FF336D',
     },
+
     border: {
-      default: '#334155',
-      hover: '#3B82F6',
-      focus: '#8B5CF6',
+      default: '#3A2A63',
+      hover: '#FF004D',
+      focus: '#FAEF5D',
     },
-    success: '#10B981',
-    warning: '#F59E0B',
-    error: '#EF4444',
-    info: '#06B6D4',
+
+    success: '#4DFF88', // Neon green (derived)
+    warning: '#FAEF5D', // Neon yellow
+    error: '#FF004D', // Neon pink-red
+    info: '#7E2553',
   },
+
   fonts: {
     heading: "'Oswald', sans-serif",
     body: "'Source Code Pro', monospace",
@@ -51,33 +56,38 @@ export const lightTheme: DefaultTheme = {
   name: 'light',
   colors: {
     background: {
-      primary: '#F8FAFC',
-      secondary: '#F1F5F9',
-      tertiary: '#E2E8F0',
+      primary: '#F5FBE6', // Vintage paper
+      secondary: '#E7F0DA', // Soft aged cream
+      tertiary: '#D6E5CF',
       card: '#FFFFFF',
-      cardHover: '#F8FAFC',
+      cardHover: '#E7F0DA',
     },
+
     text: {
-      primary: '#0F172A',
-      secondary: '#475569',
-      muted: '#64748B',
+      primary: '#233D4D', // Deep slate blue
+      secondary: '#215E61', // Muted teal
+      muted: '#6B8A8E',
     },
+
     accent: {
-      primary: '#2563EB',
-      secondary: '#7C3AED',
-      tertiary: '#0891B2',
-      hover: '#1D4ED8',
+      primary: '#FE7F2D', // Burnt orange
+      secondary: '#215E61', // Teal accent
+      tertiary: '#233D4D', // Ink-like contrast
+      hover: '#E36F24',
     },
+
     border: {
-      default: '#E2E8F0',
-      hover: '#2563EB',
-      focus: '#7C3AED',
+      default: '#C7D6C2',
+      hover: '#FE7F2D',
+      focus: '#215E61',
     },
-    success: '#059669',
-    warning: '#D97706',
-    error: '#DC2626',
-    info: '#0891B2',
+
+    success: '#6BAF92', // Muted vintage green
+    warning: '#FE7F2D', // Warm amber-orange
+    error: '#C84B31', // Rust red
+    info: '#215E61',
   },
+
   fonts: {
     heading: "'Oswald', sans-serif",
     body: "'Source Code Pro', monospace",

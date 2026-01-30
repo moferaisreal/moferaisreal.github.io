@@ -17,9 +17,9 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <HeaderWrapper>
-      <Title>Meu Portfólio de Projetos</Title>
+      <Title>Marcelo Rocha</Title>
       <Subtitle>
-        Uma coleção de exercícios e projetos dos meus estudos.
+        Minha coleção de projetos.
       </Subtitle>
 
       {isMobile ? (

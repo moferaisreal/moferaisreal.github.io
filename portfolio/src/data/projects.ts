@@ -4,7 +4,7 @@ export interface Project {
   description: string;
   completionDate: string;
   url: string;
-  icon: string; // Nome do ícone do Heroicons
+  icon: string; // Nome do ícone react icons - lembrar de importar
   category: 'frontend' | 'backend' | 'database' | 'mobile';
 }
 
@@ -81,6 +81,15 @@ export const projects: Project[] = [
     completionDate: '11-08-25',
     url: 'https://desenvolvedor-full-stack-pythonv2-m.vercel.app/',
     icon: 'HiOutlineFunnel',
+    category: 'frontend',
+  },
+  {
+    id: 'miniaturagrap',
+    title: 'LP Avançada',
+    description: 'Menu responsivo, carousel, formulário com validação e máscara',
+    completionDate: '04-07-25',
+    url: 'https://desenvolvedor-full-stack-pythonv2-m.vercel.app/',
+    icon: 'HiHome',
     category: 'frontend',
   },
   // ... adicionar todos os projetos do HTML original
