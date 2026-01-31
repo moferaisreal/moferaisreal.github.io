@@ -24,7 +24,7 @@ jobs:
           cache-dependency-path: portfolio-source/package-lock.json
 
       - name: Install dependencies
-        working-directory: ./portfolio-source
+        working-directory: ./src
         run: |
           echo "📥 Instalando dependências..."
           npm ci
