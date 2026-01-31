@@ -19,141 +19,53 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: '20'
+          cache: 'npm'
 
-      - name: Detect and build projects automatically
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build React portfolio
+        run: npm run build
+
+      - name: Copy old projects to dist
         run: |
-          echo "🔍 Procurando projetos que precisam de build..."
+          echo "📦 Copiando projetos antigos para o build..."
 
-          # Função para fazer build de um projeto
-          build_project() {
-            local project_dir=$1
-            echo ""
-            echo "📦 Iniciando build do projeto: $project_dir"
-            echo "================================================"
-            
-            cd "$project_dir"
-            
-            if [ -f "package.json" ]; then
-              echo "✅ package.json encontrado"
-              
-              # Instalar dependências
-              echo "📥 Instalando dependências..."
-              npm install --production=false
-              
-              # Tentar diferentes comandos de build em ordem de prioridade
-              echo "🔨 Tentando comandos de build..."
-              
-              if npm run build 2>/dev/null; then
-                echo "✅ ✨ Build realizado com sucesso usando: npm run build"
-              elif npm run prod 2>/dev/null; then
-                echo "✅ ✨ Build realizado com sucesso usando: npm run prod"
-              elif npx grunt build 2>/dev/null; then
-                echo "✅ ✨ Build realizado com sucesso usando: grunt build"
-              elif npx grunt 2>/dev/null; then
-                echo "✅ ✨ Build realizado com sucesso usando: grunt"
-              elif npx gulp build 2>/dev/null; then
-                echo "✅ ✨ Build realizado com sucesso usando: gulp build"
-              elif npx gulp 2>/dev/null; then
-                echo "✅ ✨ Build realizado com sucesso usando: gulp"
-              else
-                echo "⚠️  Nenhum comando de build padrão funcionou para $project_dir"
-                echo "📋 Scripts disponíveis no package.json:"
-                npm run 2>/dev/null | grep -E "^  [a-zA-Z]" || echo "   Nenhum script encontrado"
-              fi
-              
-              # Verificar se build gerou arquivos
-              if [ -d "dist" ]; then
-                echo "📁 Pasta dist/ criada com sucesso"
-                ls -la dist/ | head -10
-              elif [ -d "build" ]; then
-                echo "📁 Pasta build/ criada com sucesso"  
-                ls -la build/ | head -10
-              else
-                echo "📁 Verificando arquivos gerados na raiz do projeto..."
-                ls -la | grep -E "\.(html|css|js)$" | head -5
-              fi
-              
-            else
-              echo "⚠️  package.json não encontrado em $project_dir - pulando"
-            fi
-            
-            cd ..
-            echo "================================================"
-          }
+          # Copiar projetos de exercício
+          cp -r exercicio_* dist/ 2>/dev/null || true
+          cp -r modulo5_projeto1_entrega dist/ 2>/dev/null || true
+          cp -r projeto_* dist/ 2>/dev/null || true
+          cp -r JogoVolei dist/ 2>/dev/null || true
+          cp -r plugins_jquery dist/ 2>/dev/null || true
 
-          # Escanear todos os diretórios procurando por package.json
-          projects_found=0
-          for dir in */; do
-            # Pular diretórios que não são projetos
-            if [[ "$dir" == "node_modules/" || "$dir" == ".git/" || "$dir" == ".github/" ]]; then
-              continue
-            fi
-            
-            if [ -d "$dir" ] && [ -f "${dir}package.json" ]; then
-              echo "🎯 Projeto encontrado: $dir"
-              build_project "$dir"
-              projects_found=$((projects_found + 1))
-            fi
-          done
+          # Copiar portfolio antigo para /old
+          mkdir -p dist/old
+          cp -r old-portfolio/* dist/old/ 2>/dev/null || true
 
-          if [ $projects_found -eq 0 ]; then
-            echo "ℹ️  Nenhum projeto com package.json encontrado"
-            echo "📝 Projetos sem build continuarão funcionando normalmente"
-          else
-            echo ""
-            echo "🎉 Build completo! $projects_found projeto(s) processado(s)"
-          fi
+          echo "✅ Projetos copiados!"
 
-      - name: Copy built projects to correct structure
+      - name: Verify build
         run: |
-          echo "Organizando estrutura para GitHub Pages..."
-
-          for dir in */; do
-            if [[ "$dir" != "node_modules/" && "$dir" != ".git/" && "$dir" != ".github/" ]]; then
-              echo "Verificando projeto: $dir"
-              
-              # Se existe dist/ ou build/, copia o conteúdo
-              if [ -d "${dir}dist" ]; then
-                echo "Copiando conteúdo de ${dir}dist/ para ${dir}"
-                cp -r "${dir}dist"/* "$dir" 2>/dev/null || true
-              elif [ -d "${dir}build" ]; then
-                echo "Copiando conteúdo de ${dir}build/ para ${dir}"
-                cp -r "${dir}build"/* "$dir" 2>/dev/null || true
-              fi
-            fi
-          done
-
-      - name: Verify build results
-        run: |
-          echo "📊 Verificando resultados do build..."
-          echo ""
-          echo "📁 Estrutura de diretórios após build:"
-          find . -maxdepth 2 -type d -name "dist" -o -name "build" | sort
-          echo ""
-          echo "📄 Arquivos HTML principais:"
-          find . -maxdepth 2 -name "index.html" | sort
+          echo "📊 Verificando build..."
+          ls -lah dist/
+          echo "📄 Arquivo principal:"
+          ls -lah dist/index.html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
-          # Manter arquivos buildados, excluir arquivos de desenvolvimento
-          exclude_assets: ".github,node_modules,src,gulpfile.js,Gruntfile.js,gruntfile.js,package*.json,*.md,.gitignore,build-portfolio.sh,.sass-cache,.tmp"
+          publish_dir: ./dist
 
       - name: Build Summary
         if: always()
         run: |
           echo ""
-          echo "📋 RESUMO DO BUILD"
+          echo "📋 RESUMO DO DEPLOY"
           echo "=================="
-          echo "✅ Projetos que não precisam de build: funcionam automaticamente"
-          echo "🔨 Projetos que precisam de build: processados automaticamente"  
-          echo "🚀 Deploy: realizado para GitHub Pages"
-          echo ""
-          echo "Para adicionar um novo projeto:"
-          echo "1. Coloque a pasta com package.json configurado"
-          echo "2. Faça commit - build será automático!"
+          echo "✅ Portfolio React: https://moferaisreal.github.io"
+          echo "✅ Portfolio Antigo: https://moferaisreal.github.io/old"
+          echo "✅ Projetos: https://moferaisreal.github.io/exercicio_css (etc)"
           echo ""
