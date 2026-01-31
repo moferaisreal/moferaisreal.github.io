@@ -1,54 +1,73 @@
-# 🚀 Portfólio de Projetos de Desenvolvimento
+# React + TypeScript + Vite
 
-Bem-vindo ao meu portfólio de projetos! Este repositório serve como uma vitrine para os diversos exercícios e projetos que desenvolvi durante meus estudos, abrangendo tecnologias de Frontend. O objetivo é demonstrar de forma prática a evolução das minhas habilidades e meu conhecimento.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## ✨ Vitrine de Projetos (Live Demo)
+Currently, two official plugins are available:
 
-Todos os projetos estão organizados em uma página principal que funciona como uma vitrine interativa. Você pode acessar a versão ao vivo hospedada na Vercel:
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-**➡️ [Acessar a Vitrine de Projetos](https://moferaisreal.github.io/)**
+## React Compiler
 
-## 🛠️ Tecnologias Utilizadas
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-Ao longo destes projetos, utilizei um conjunto variado de tecnologias e ferramentas do ecossistema Frontend, incluindo:
+## Expanding the ESLint configuration
 
-* **Linguagens Base:** HTML5, CSS3, JavaScript (ES6+)
-* **Frameworks CSS:** Bootstrap, Tailwind CSS
-* **Pré-processadores CSS:** Sass, Less
-* **Bibliotecas JavaScript:** jQuery, React
-* **Ferramentas de Build/Hospedagem:** Vercel
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-## 📫 Contato
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-Gostou do que viu? Vamos nos conectar!
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-* **Email:** marcelovprm@gmail.com
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
 
----
----
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-# 🚀 Development Project Portfolio
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-Welcome to my project portfolio! This repository serves as a showcase for the various exercises and projects I have developed during my studies, covering Frontend technologies. The goal is to practically demonstrate the evolution of my skills and knowledge.
-
-## ✨ Project Showcase (Live Demo)
-
-All projects are organized on a main page that acts as an interactive showcase. You can access the live version hosted on Vercel:
-
-**➡️ [Access the Project Showcase](https://moferaisreal.github.io/)**
-
-## 🛠️ Technologies Used
-
-Throughout these projects, I have used a diverse set of technologies and tools from the Frontend ecosystem, including:
-
-* **Base Languages:** HTML5, CSS3, JavaScript (ES6+)
-* **CSS Frameworks:** Bootstrap, Tailwind CSS
-* **CSS Pre-processors:** Sass, Less
-* **JavaScript Libraries:** jQuery, React
-* **Build/Hosting Tools:** Vercel
-
-## 📫 Contact
-
-Liked what you saw? Let's connect!
-
-* **Email:** marcelovprm@gmail.com
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
