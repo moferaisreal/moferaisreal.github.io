@@ -21,43 +21,51 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          cache-dependency-path: portfolio-source/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
-
-      - name: Build React portfolio
-        run: npm run build
-
-      - name: Copy old projects to dist
+        working-directory: ./portfolio-source
         run: |
-          echo "📦 Copiando projetos antigos para o build..."
+          echo "📥 Instalando dependências..."
+          npm ci
 
-          # Copiar projetos de exercício
-          cp -r exercicio_* dist/ 2>/dev/null || true
-          cp -r modulo5_projeto1_entrega dist/ 2>/dev/null || true
-          cp -r projeto_* dist/ 2>/dev/null || true
-          cp -r JogoVolei dist/ 2>/dev/null || true
-          cp -r plugins_jquery dist/ 2>/dev/null || true
-
-          # Copiar portfolio antigo para /old
-          mkdir -p dist/old
-          cp -r old-portfolio/* dist/old/ 2>/dev/null || true
-
-          echo "✅ Projetos copiados!"
-
-      - name: Verify build
+      - name: Build project
+        working-directory: ./portfolio-source
         run: |
-          echo "📊 Verificando build..."
-          ls -lah dist/
-          echo "📄 Arquivo principal:"
-          ls -lah dist/index.html
+          echo "🔨 Construindo projeto React..."
+          npm run build
+          echo "✅ Build concluído!"
+
+      - name: Verify build in root
+        run: |
+          echo "📊 Verificando arquivos na raiz..."
+          echo ""
+          echo "Arquivos principais:"
+          ls -lah | grep -E "index.html|assets|favicon"
+          echo ""
+          if [ -f "index.html" ]; then
+            echo "✅ index.html encontrado na raiz!"
+          else
+            echo "❌ ERRO: index.html não encontrado na raiz!"
+            exit 1
+          fi
+
+          if [ -d "assets" ]; then
+            echo "✅ Pasta assets/ encontrada!"
+            echo "Conteúdo de assets/:"
+            ls -lah assets/ | head -10
+          else
+            echo "⚠️  Pasta assets/ não encontrada"
+          fi
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          publish_dir: .
+          # Excluir código fonte e arquivos desnecessários
+          exclude_assets: '.github,portfolio-source,old-projects,backup-*,node_modules,.gitignore,reorganizar.sh'
 
       - name: Build Summary
         if: always()
@@ -65,7 +73,13 @@ jobs:
           echo ""
           echo "📋 RESUMO DO DEPLOY"
           echo "=================="
-          echo "✅ Portfolio React: https://moferaisreal.github.io"
-          echo "✅ Portfolio Antigo: https://moferaisreal.github.io/old"
-          echo "✅ Projetos: https://moferaisreal.github.io/exercicio_css (etc)"
+          echo "✅ Build: Concluído"
+          echo "✅ Arquivos na raiz do repositório"
+          echo "🚀 Deploy: GitHub Pages"
+          echo "🌐 URL: https://moferaisreal.github.io"
+          echo ""
+          echo "📁 Estrutura:"
+          echo "  - Portfólio React: Raiz do site"
+          echo "  - Projetos antigos: /old-projects/"
+          echo "  - Código fonte: /portfolio-source/ (não publicado)"
           echo ""
