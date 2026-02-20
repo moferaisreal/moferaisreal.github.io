@@ -9,6 +9,16 @@ export interface Project {
 }
 
 export const projects: Project[] = [
+   {
+    id: 'lista-de-contato',
+    title: 'Contact List',
+    description:
+      'Lista de contatos com funcionalidades de adicionar, editar e remover contatos',
+    completionDate: '19-02-26',
+    url: 'https://listacontatos-pi.vercel.app/',
+    icon: 'HiNumberedList',
+    category: 'frontend',
+  },
   {
     id: 'calculadora-imc',
     title: 'Calculadora IMC',
