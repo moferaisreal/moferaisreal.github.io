@@ -3,11 +3,11 @@ import {
   FaGithub,
   FaInstagram,
   FaLinkedinIn,
+  FaRedditAlien,
   FaXTwitter,
-  FaRedditAlien 
 } from 'react-icons/fa6';
-import { SiSubstack } from "react-icons/si";
 import { HiEnvelope } from 'react-icons/hi2';
+import { SiSubstack } from 'react-icons/si';
 import {
   AboutHeader,
   AboutWrapper,
@@ -88,7 +88,7 @@ export const About: React.FC = () => {
           </li>
           <li>
             <SocialLink
-              href='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+              href='https://www.linkedin.com/in/marcelo-rocha-6129b11b2/'
               target='_blank'
               rel='noopener noreferrer'
               aria-label='LinkedIn'
@@ -106,7 +106,7 @@ export const About: React.FC = () => {
               <FaRedditAlien />
             </SocialLink>
           </li>
-           <li>
+          <li>
             <SocialLink
               href='https://substack.com/@mofera?'
               target='_blank'
